@@ -57,6 +57,7 @@ barba.init({
   preventRunning: true,
   transitions: [
     {
+      name: 'to-portfolio',
       sync: true,
       from: { namespace: ["grid-page"] },
       to: { namespace: ["cms-page"] },
@@ -68,15 +69,15 @@ barba.init({
       }
     },
     {
+      name: 'from-portfolio',
       sync: true,
       from: { namespace: ["cms-page"] },
       to: { namespace: ["grid-page"] },
       enter(data) {
-        makeItemActive();
+        // Regular page transition without the flip animation
         createSwiper();
         mySlider.slideTo($(".active-flip-item").index(), 0);
         $(data.next.container).addClass("fixed");
-        flip($(".cms-page_img-wrap"), $(".active-flip-item .visual_wrap"));
         return gsap.to(data.current.container, { opacity: 0, duration: 0.1 });
       }
     }
