@@ -14,33 +14,33 @@ function colorModeToggle(dark, animate) {
 
   let lightColors = {}, darkColors = {};
   cssVariables.split(",").forEach(function (item) {
-    let lightValue = computed.getPropertyValue(`--color--${item}`);
-    let darkValue = computed.getPropertyValue(`--dark--${item}`);
-    if (lightValue.length) {
-      if (!darkValue.length) darkValue = lightValue;
-      lightColors[`--color--${item}`] = lightValue;
-      darkColors[`--color--${item}`] = darkValue;
-    }
+      let lightValue = computed.getPropertyValue(`--color--${item}`);
+      let darkValue = computed.getPropertyValue(`--dark--${item}`);
+      if (lightValue.length) {
+          if (!darkValue.length) darkValue = lightValue;
+          lightColors[`--color--${item}`] = lightValue;
+          darkColors[`--color--${item}`] = darkValue;
+      }
   });
 
   function setColors(colorObject, animate) {
-    if (typeof gsap !== "undefined" && animate) {
-      gsap.to(htmlElement, {
-        ...colorObject,
-        duration: colorModeDuration,
-        ease: colorModeEase,
-      });
-    } else {
-      Object.keys(colorObject).forEach(function (key) {
-        htmlElement.style.setProperty(key, colorObject[key]);
-      });
-    }
+      if (typeof gsap !== "undefined" && animate) {
+          gsap.to(htmlElement, {
+              ...colorObject,
+              duration: colorModeDuration,
+              ease: colorModeEase,
+          });
+      } else {
+          Object.keys(colorObject).forEach(function (key) {
+              htmlElement.style.setProperty(key, colorObject[key]);
+          });
+      }
   }
 
   if (dark) {
-    setColors(darkColors, animate);
+      setColors(darkColors, animate);
   } else {
-    setColors(lightColors, animate);
+      setColors(lightColors, animate);
   }
 }
 
@@ -55,28 +55,20 @@ function attr(defaultVal, attrVal) {
   return defaultVal;
 }
 
-// Part of File 2: Scroll Trigger Integration with Custom Attribute Handling
+// Part of File 2: Scroll Trigger Integration
 window.addEventListener("DOMContentLoaded", (event) => {
   gsap.registerPlugin(ScrollTrigger);
 
-  // Initialize the page in light mode
-  colorModeToggle(false, false);
-
   // Add scroll trigger for each section with color mode toggle
-  document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
-    const modeValue = section.getAttribute("colorscroll-mode");
+  document.querySelectorAll("[colorscroll-mode]").forEach(section => {
+      const modeIndex = +section.getAttribute("colorscroll-mode");
 
-    // Determine if the mode is dark or light
-    const isDarkMode = modeValue === "dark";
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top center",
-      end: "bottom center",
-      onEnter: () => colorModeToggle(isDarkMode, true),
-      onLeave: () => colorModeToggle(!isDarkMode, true), // Toggle back on leave
-      onEnterBack: () => colorModeToggle(isDarkMode, true),
-      onLeaveBack: () => colorModeToggle(!isDarkMode, true) // Toggle back on leave back
-    });
+      ScrollTrigger.create({
+          trigger: section,
+          start: "top center",
+          end: "bottom center",
+          onEnter: () => colorModeToggle(modeIndex % 2 === 0, true),
+          onLeaveBack: () => colorModeToggle(modeIndex % 2 !== 0, true)
+      });
   });
 });
