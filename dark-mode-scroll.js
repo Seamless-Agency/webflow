@@ -56,22 +56,25 @@ function attr(defaultVal, attrVal) {
   return defaultVal;
 }
 
-// Part of File 2: Scroll Trigger Integration
+// Part of File 2: Scroll Trigger Integration with Custom Attribute Handling
 window.addEventListener("DOMContentLoaded", (event) => {
   gsap.registerPlugin(ScrollTrigger);
 
+  // Add scroll trigger for each section with color mode toggle
   document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
-    const modeIndex = +section.getAttribute("colorscroll-mode");
-    let isDarkMode = modeIndex % 2 === 0;
+    const modeValue = section.getAttribute("colorscroll-mode");
+
+    // Determine if the mode is dark or light
+    const isDarkMode = modeValue === "dark";
 
     ScrollTrigger.create({
       trigger: section,
       start: "top center",
       end: "bottom center",
       onEnter: () => colorModeToggle(isDarkMode, true),
-      onLeave: () => colorModeToggle(!isDarkMode, true), // Toggles back on leave
+      onLeave: () => colorModeToggle(!isDarkMode, true), // Toggle back on leave
       onEnterBack: () => colorModeToggle(isDarkMode, true),
-      onLeaveBack: () => colorModeToggle(!isDarkMode, true), // Toggles back on leave back
+      onLeaveBack: () => colorModeToggle(!isDarkMode, true), // Toggle back on leave back
     });
   });
 });
