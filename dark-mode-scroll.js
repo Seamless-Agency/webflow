@@ -56,11 +56,10 @@ function attr(defaultVal, attrVal) {
   return defaultVal;
 }
 
-// Part of File 2: Scroll Trigger Integration
+// Part of File 2: Scroll Trigger Integration with onToggle
 window.addEventListener("DOMContentLoaded", (event) => {
   gsap.registerPlugin(ScrollTrigger);
 
-  // Add scroll trigger for each section with color mode toggle
   document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
     const modeIndex = +section.getAttribute("colorscroll-mode");
 
@@ -68,9 +67,16 @@ window.addEventListener("DOMContentLoaded", (event) => {
       trigger: section,
       start: "top center",
       end: "bottom center",
-      onEnter: () => colorModeToggle(modeIndex % 2 === 0, true),
-      onLeave: () => colorModeToggle(modeIndex % 2 !== 0, true), // Add this line
-      onLeaveBack: () => colorModeToggle(modeIndex % 2 !== 0, true),
+      onToggle: (self) => {
+        // Determine if the section is active (in view) or not
+        if (self.isActive) {
+          // If the section is active, switch to the color mode specified by the section
+          colorModeToggle(modeIndex % 2 === 0, true);
+        } else {
+          // If the section is no longer active, switch back to the original color mode
+          colorModeToggle(modeIndex % 2 !== 0, true);
+        }
+      },
     });
   });
 });
