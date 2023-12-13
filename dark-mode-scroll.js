@@ -12,8 +12,7 @@ function colorModeToggle(dark, animate) {
   let colorModeEase = attr("power1.out", scriptTag.getAttribute("ease"));
   const cssVariables = scriptTag.getAttribute("tr-color-vars");
 
-  let lightColors = {},
-    darkColors = {};
+  let lightColors = {}, darkColors = {};
   cssVariables.split(",").forEach(function (item) {
     let lightValue = computed.getPropertyValue(`--color--${item}`);
     let darkValue = computed.getPropertyValue(`--dark--${item}`);
@@ -60,6 +59,9 @@ function attr(defaultVal, attrVal) {
 window.addEventListener("DOMContentLoaded", (event) => {
   gsap.registerPlugin(ScrollTrigger);
 
+  // Initialize the page in light mode
+  colorModeToggle(false, false);
+
   // Add scroll trigger for each section with color mode toggle
   document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
     const modeValue = section.getAttribute("colorscroll-mode");
@@ -74,7 +76,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
       onEnter: () => colorModeToggle(isDarkMode, true),
       onLeave: () => colorModeToggle(!isDarkMode, true), // Toggle back on leave
       onEnterBack: () => colorModeToggle(isDarkMode, true),
-      onLeaveBack: () => colorModeToggle(!isDarkMode, true), // Toggle back on leave back
+      onLeaveBack: () => colorModeToggle(!isDarkMode, true) // Toggle back on leave back
     });
   });
 });
