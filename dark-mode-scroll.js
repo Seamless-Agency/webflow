@@ -62,18 +62,27 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
   document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
     const modeIndex = +section.getAttribute("colorscroll-mode");
+    console.log(
+      "Setting up ScrollTrigger for section:",
+      section,
+      "with modeIndex:",
+      modeIndex
+    );
 
     ScrollTrigger.create({
       trigger: section,
       start: "top center",
       end: "bottom center",
       onToggle: (self) => {
-        // Determine if the section is active (in view) or not
+        console.log(
+          "ScrollTrigger onToggle:",
+          self.isActive ? "Entering" : "Leaving",
+          "section with modeIndex:",
+          modeIndex
+        );
         if (self.isActive) {
-          // If the section is active, switch to the color mode specified by the section
           colorModeToggle(modeIndex % 2 === 0, true);
         } else {
-          // If the section is no longer active, switch back to the original color mode
           colorModeToggle(modeIndex % 2 !== 0, true);
         }
       },
