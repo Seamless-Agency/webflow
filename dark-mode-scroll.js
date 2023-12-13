@@ -4,16 +4,29 @@
  */
 
 // Part of File 1: Color Mode Toggle Functionality
-function colorModeToggle(dark, animate) {
+let isDarkMode = false; // Added to track the current mode
+
+function colorModeToggle(animate) {
   const htmlElement = document.documentElement;
   const scriptTag = document.querySelector("[tr-color-vars]");
   const computed = getComputedStyle(htmlElement);
+
+  // Helper function to parse attributes
+  function attr(defaultVal, attrVal) {
+    const defaultValType = typeof defaultVal;
+    if (typeof attrVal !== "string" || attrVal.trim() === "") return defaultVal;
+    if (attrVal === "true" && defaultValType === "boolean") return true;
+    if (attrVal === "false" && defaultValType === "boolean") return false;
+    if (isNaN(attrVal) && defaultValType === "string") return attrVal;
+    if (!isNaN(attrVal) && defaultValType === "number") return +attrVal;
+    return defaultVal;
+  }
+
   let colorModeDuration = attr(0.5, scriptTag.getAttribute("duration"));
   let colorModeEase = attr("power1.out", scriptTag.getAttribute("ease"));
   const cssVariables = scriptTag.getAttribute("tr-color-vars");
 
-  let lightColors = {},
-    darkColors = {};
+  let lightColors = {}, darkColors = {};
   cssVariables.split(",").forEach(function (item) {
     let lightValue = computed.getPropertyValue(`--color--${item}`);
     let darkValue = computed.getPropertyValue(`--dark--${item}`);
@@ -38,22 +51,16 @@ function colorModeToggle(dark, animate) {
     }
   }
 
-  if (dark) {
-    setColors(darkColors, animate);
-  } else {
-    setColors(lightColors, animate);
+  function toggleColorMode() {
+    isDarkMode = !isDarkMode;
+    if (isDarkMode) {
+      setColors(darkColors, animate);
+    } else {
+      setColors(lightColors, animate);
+    }
   }
-}
 
-// Helper function to parse attributes
-function attr(defaultVal, attrVal) {
-  const defaultValType = typeof defaultVal;
-  if (typeof attrVal !== "string" || attrVal.trim() === "") return defaultVal;
-  if (attrVal === "true" && defaultValType === "boolean") return true;
-  if (attrVal === "false" && defaultValType === "boolean") return false;
-  if (isNaN(attrVal) && defaultValType === "string") return attrVal;
-  if (!isNaN(attrVal) && defaultValType === "number") return +attrVal;
-  return defaultVal;
+  toggleColorMode(); // Call this to switch between light and dark
 }
 
 // Part of File 2: Scroll Trigger Integration with onToggle
@@ -62,28 +69,15 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
   document.querySelectorAll("[colorscroll-mode]").forEach((section) => {
     const modeIndex = +section.getAttribute("colorscroll-mode");
-    console.log(
-      "Setting up ScrollTrigger for section:",
-      section,
-      "with modeIndex:",
-      modeIndex
-    );
 
     ScrollTrigger.create({
       trigger: section,
       start: "top center",
       end: "bottom center",
       onToggle: (self) => {
-        console.log(
-          "ScrollTrigger onToggle:",
-          self.isActive ? "Entering" : "Leaving",
-          "section with modeIndex:",
-          modeIndex
-        );
-        if (self.isActive) {
-          colorModeToggle(modeIndex % 2 === 0, true);
-        } else {
-          colorModeToggle(modeIndex % 2 !== 0, true);
+        if (self.isActive && (modeIndex % 2 === 0) !== isDarkMode) {
+          // Only toggle color mode if the section's mode is different from the current mode
+          colorModeToggle(true);
         }
       },
     });
