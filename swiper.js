@@ -75,10 +75,10 @@ barba.init({
       to: { namespace: ["grid-page"] },
       enter(data) {
         // Regular page transition without the flip animation
-        createSwiper();
-        mySlider.slideTo($(".active-flip-item").index(), 0);
-        $(data.next.container).addClass("fixed");
-        return gsap.to(data.current.container, { opacity: 0, duration: 0.1 });
+        // createSwiper();
+        // mySlider.slideTo($(".active-flip-item").index(), 0);
+        // $(data.next.container).addClass("fixed");
+        // return gsap.to(data.current.container, { opacity: 0, duration: 0.1 });
       }
     }
   ]
