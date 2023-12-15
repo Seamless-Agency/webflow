@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll-Driven Background Video Move and Scale</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/ScrollTrigger.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 300%; /* Adjust as needed to ensure enough scrolling space */
+            overflow-x: hidden;
+        }
+
+        #startDiv, #endDiv {
+            width: 150px;
+            height: 150px;
+            border: 2px solid blue;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #endDiv {
+            width: 300px; /* Larger size for endDiv */
+            height: 300px;
+            margin-top: 1000px; /* Adjust based on your layout */
+            border-color: red;
+        }
+
+        #myVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: auto;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+
+<div id="startDiv">
+    <video id="myVideo" loop muted playsinline>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        Your browser does not support HTML video.
+    </video>
+</div>
+
+<div id="endDiv">
+    <!-- Video will move to here -->
+</div>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const startDiv = document.querySelector("#startDiv");
+    const endDiv = document.querySelector("#endDiv");
+    const myVideo = document.querySelector("#myVideo");
+
+    // Calculate the start and end points based on div positions
+    const startTrigger = startDiv.offsetTop;
+    const endTrigger = endDiv.offsetTop + endDiv.offsetHeight;
+
+    ScrollTrigger.create({
+        start: startTrigger,
+        end: endTrigger,
+        scrub: 1,
+        onUpdate: (self) => {
+            const progress = self.progress;
+
+            const startRect = startDiv.getBoundingClientRect();
+            const endRect = endDiv.getBoundingClientRect();
+
+            const newX = gsap.utils.interpolate(startRect.left, endRect.left, progress) + window.scrollX;
+            const newY = gsap.utils.interpolate(startRect.top, endRect.top, progress) + window.scrollY;
+
+            gsap.set(myVideo, {
+                x: newX - startRect.left,
+                y: newY - startRect.top,
+                scale: gsap.utils.interpolate(1, endRect.width / startRect.width, progress)
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
